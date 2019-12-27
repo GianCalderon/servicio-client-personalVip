@@ -1,12 +1,15 @@
 package com.springboot.personaVip.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.personaVip.document.Account;
 import com.springboot.personaVip.document.PersonalVip;
 import com.springboot.personaVip.dto.PersonalVipDto;
 import com.springboot.personaVip.repo.PersonalVipRepo;
@@ -37,50 +40,69 @@ public class PersonalVipImpl implements PersonalVipInterface {
     return repo.findById(id);
   }
 
-  public Mono<PersonalVip> save(PersonalVip personalVip) {
+  public Mono<PersonalVip> save(PersonalVip PersonalVip) {
 
-	  return repo.save(personalVip);
-	 
+	  PersonalVip.setCreateDate(new Date());
+	  PersonalVip.setUpdateDate(new Date());
+	  PersonalVip.setListAccount(new ArrayList<Account>());
+	
+      return repo.save(PersonalVip);
   }
 
-  public Mono<PersonalVip> update(PersonalVip personalVip,String id) {
-	  
-    return repo.findById(id).flatMap(p -> {
+  public Mono<PersonalVip> update(PersonalVipDto PersonalVipDto,String id) {
 
+    return repo.findByNumDoc(id).flatMap(persona -> {
+  	
+      List<Account> list = persona.getListAccount();
       
-      p.setNumDoc(personalVip.getNumDoc());
-      p.setName(personalVip.getName());
-      p.setApePat(personalVip.getApePat());
-      p.setApeMat(personalVip.getApeMat());
-      p.setAddress(personalVip.getAddress());
-      p.setUpdateDate(new Date());
-    
+      Account account = new Account();
       
-      return repo.save(p);
+      account.setIdAccount(PersonalVipDto.getIdAccount());
+      account.setNumberAccount(PersonalVipDto.getNumberAccount());
+      account.setNameAccount(PersonalVipDto.getNameAccount());
 
+      list.add(account);
+
+      persona.setTipoDoc(PersonalVipDto.getTipoDoc());
+      persona.setNumDoc(PersonalVipDto.getNumDoc());
+      persona.setName(PersonalVipDto.getName());
+      persona.setApePat(PersonalVipDto.getApePat());
+      persona.setApeMat(PersonalVipDto.getApeMat());
+      persona.setAddress(PersonalVipDto.getAddress());
+      persona.setUpdateDate(new Date());
+      persona.setListAccount(list);
+      
+      return repo.save(persona);
+  
     });
   }
 
-  public Mono<Void> delete(PersonalVip personalVip) {
-    return repo.delete(personalVip);
+  public Mono<Void> delete(PersonalVip PersonalVip) {
+    return repo.delete(PersonalVip);
   }
 
-  public Mono<PersonalVip> saveDto(PersonalVipDto personalVipDto) {
+  public Mono<PersonalVip> saveDto(PersonalVipDto PersonalVipDto) {
 
-    return save(convert.convertPersonalVip(personalVipDto));
+    return repo.save(convert.convertPersonalVip(PersonalVipDto));
   }
-//
-//  @Override
-//  public Mono<Personal> nameSearch(String name) {
-//
-//    return repo.findByName(name);
-//  }
-//
-//  @Override
-//  public Mono<Personal> findByNumDoc(String numDoc) {
-//
-//    return repo.findByNumDoc(numDoc);
-//  }
 
+  @Override
+  public Mono<PersonalVip> nameSearch(String name) {
+
+    return repo.findByName(name);
+  }
+
+  @Override
+  public Mono<PersonalVip> findByNumDoc(String numDoc) {
+
+    return repo.findByNumDoc(numDoc);
+  }
+  
+  @Override
+  public Mono<PersonalVip> findAllAccount(String nameAccount) {
+
+    return repo.searchAccount(nameAccount);
+  }
+  
 
 }

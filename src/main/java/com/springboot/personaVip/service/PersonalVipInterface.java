@@ -8,23 +8,22 @@ import reactor.core.publisher.Mono;
 
 public interface PersonalVipInterface {
 
-  public Flux<PersonalVip> findAll();
-  
-  public Mono<PersonalVip> findById(String id);
-  
-  public Mono<PersonalVip> save(PersonalVip personalVip);
-  
-  public Mono<PersonalVip> update(PersonalVip personalVip,String id);
-  
-  public Mono<Void> delete(PersonalVip personalVip);
-  
-  public Mono<PersonalVip> saveDto(PersonalVipDto personalVipDto);
-  
-//  public Mono<Personal> saveDto(PersonalDto personalDto);
-//  
-//  public Mono<Personal> nameSearch(String name);
-//  
-//  public Mono<Personal> findByNumDoc(String numDoc);
-
+	public Flux<PersonalVip> findAll();
+	  
+	  public Mono<PersonalVip> findById(String id);
+	  
+	  public Mono<PersonalVip> save(PersonalVip personalVip);
+	  
+	  public Mono<PersonalVip> update(PersonalVipDto personalVipDto,String id);
+	  
+	  public Mono<Void> delete(PersonalVip personalVip);
+	  
+	  public Mono<PersonalVip> saveDto(PersonalVipDto personalVipDto);
+	  
+	  public Mono<PersonalVip> nameSearch(String name);
+	  
+	  public Mono<PersonalVip> findByNumDoc(String numDoc);
+	  
+	  public Mono<PersonalVip> findAllAccount(String nameAccount);
 
 }

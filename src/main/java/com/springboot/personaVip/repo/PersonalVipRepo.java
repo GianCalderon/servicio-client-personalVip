@@ -14,8 +14,10 @@ public interface PersonalVipRepo extends ReactiveMongoRepository<PersonalVip,Str
   @Query("{'nombre': ?0 }")
   public Mono<PersonalVip> nameSearch(String name);
   
-  
   public Mono<PersonalVip> findByNumDoc(String numDoc);
+  
+  @Query("{'idCuentas.idCuenta': ?0 }")
+  public Mono<PersonalVip>searchAccount(String nameAccount);
 
 
   

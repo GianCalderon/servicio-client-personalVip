@@ -2,39 +2,56 @@ package com.springboot.personaVip.util;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.springboot.personaVip.document.Account;
 import com.springboot.personaVip.document.PersonalVip;
 import com.springboot.personaVip.dto.PersonalVipDto;
+
 
 @Component
 public class UtilConvert {
 
-  public PersonalVip convertPersonalVip(PersonalVipDto personalVipDto) {
+  private static final Logger LOGGER = LoggerFactory.getLogger(UtilConvert.class);
+	
 
-    Map<String,String> cuentaMap = new HashMap<String,String>();
-    PersonalVip personalVip = new PersonalVip();
+  public PersonalVip convertPersonalVip(PersonalVipDto PersonalVipDto) {
+	
+    LOGGER.info("convertir ---> " + PersonalVipDto.toString());
 
-    cuentaMap.put(personalVipDto.getNameAccount(), personalVipDto.getIdCuenta());
-    List<Map<String,String>> lista = new ArrayList<Map<String,String>>();
-    lista.add(cuentaMap);
+    Account account = new Account();
+    account.setIdAccount(PersonalVipDto.getIdAccount());
+    account.setNumberAccount(PersonalVipDto.getNumberAccount());
+    account.setNameAccount(PersonalVipDto.getNameAccount());
+    
+    
+    PersonalVip PersonalVip = new PersonalVip();
 
-  
-    personalVip.setTipoDoc(personalVipDto.getTipoDoc());
-    personalVip.setNumDoc(personalVipDto.getNumDoc());
-    personalVip.setName(personalVipDto.getName()); 
-    personalVip.setApePat(personalVipDto.getApePat());
-    personalVip.setApeMat(personalVipDto.getApeMat());
-    personalVip.setAddress(personalVipDto.getAddress());
-    personalVip.setCreateDate(new Date());
-    personalVip.setUpdateDate(new Date());
-    personalVip.setIdCuentas(lista);
+    List<Account> listCuenta = new ArrayList<Account>();
+    listCuenta.add(account);
+    
 
-    return personalVip;
+    PersonalVip.setTipoDoc(PersonalVipDto.getTipoDoc());
+    PersonalVip.setNumDoc(PersonalVipDto.getNumDoc());
+    PersonalVip.setName(PersonalVipDto.getName()); 
+    PersonalVip.setApePat(PersonalVipDto.getApePat());
+    PersonalVip.setApeMat(PersonalVipDto.getApeMat());
+    PersonalVip.setAddress(PersonalVipDto.getAddress());
+    PersonalVip.setCreateDate(new Date());
+    PersonalVip.setUpdateDate(new Date());
+    PersonalVip.setListAccount(listCuenta);
+
+    LOGGER.info("TRANSFORMADO ---> "+PersonalVip.toString());
+    
+    LOGGER.info("LISTA_CUENTAS ---> "+listCuenta.toString());
+   
+    return PersonalVip;
   }
+  
+  
 
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springboot.personaVip.document.Account;
 import com.springboot.personaVip.document.PersonalVip;
 import com.springboot.personaVip.dto.PersonalVipDto;
 import com.springboot.personaVip.service.PersonalVipInterface;
@@ -34,6 +35,7 @@ public class PersonalVipController {
   @Autowired
   PersonalVipInterface service;
 
+
   @GetMapping
   public Mono<ResponseEntity<Flux<PersonalVip>>> toList() {
 
@@ -50,24 +52,25 @@ public class PersonalVipController {
       .defaultIfEmpty(ResponseEntity.notFound().build());
 
   }
+  
+  @PostMapping
+  public Mono<ResponseEntity<PersonalVip>> save(@RequestBody PersonalVip personalVip) {
 
-//  @PostMapping
-//  public Mono<ResponseEntity<PersonalVip>> save(@RequestBody PersonalVip personalVip) {
-//
-//    return service.save(personalVip).map(p -> ResponseEntity.created(URI.create("/api/personalVip"))
-//                  .contentType(MediaType.APPLICATION_JSON).body(p));
-//
-//  }
+    return service.save(personalVip).map(p -> ResponseEntity.created(URI.create("/api/personal"))
+                  .contentType(MediaType.APPLICATION_JSON).body(p));
+
+  }
 
   @PutMapping("/{id}")
-  public Mono<ResponseEntity<PersonalVip>> update(@RequestBody PersonalVip personalVip,
+  public Mono<ResponseEntity<PersonalVip>> update(@RequestBody PersonalVipDto personalVipDto,
                     @PathVariable String id) {
 
-    return service.update(personalVip, id)
-             .map(p -> ResponseEntity.created(URI.create("/api/personalVip".concat(p.getId())))
+    LOGGER.info("OBJETO RECIBIDO A ACTUALIZAR ---> " + personalVipDto.toString());
+	
+    return service.update(personalVipDto, id)
+             .map(p -> ResponseEntity.created(URI.create("/api/personal".concat(p.getId())))
              .contentType(MediaType.APPLICATION_JSON).body(p))
              .defaultIfEmpty(ResponseEntity.notFound().build());
-
   }
 
   @DeleteMapping("/{id}")
@@ -79,23 +82,37 @@ public class PersonalVipController {
 
   }
   
-  //OPERACIONES QUE EXPONEN SERVICIOS
   
-  @PostMapping
+  @PostMapping("/guardar")
   public Mono<ResponseEntity<PersonalVip>> save(@RequestBody PersonalVipDto personalVipDto) {
 
-    return service.saveDto(personalVipDto).map(p -> ResponseEntity.created(URI.create("/api/personalVip"))
+    LOGGER.info("PersonalDto RECIBIBIDO ---> " + personalVipDto.toString());
+    
+    return service.saveDto(personalVipDto).map(p -> ResponseEntity.created(URI.create("/api/personal"))
                   .contentType(MediaType.APPLICATION_JSON).body(p));
 
   }
   
-//  @GetMapping("/{id}")
-//  public Mono<ResponseEntity<PersonalVip>> searchDni(@PathVariable String dni) {
-//
-//    return service.findByNumDoc(dni).map(p -> ResponseEntity.ok()
-//      .contentType(MediaType.APPLICATION_JSON).body(p))
-//      .defaultIfEmpty(ResponseEntity.notFound().build());
-//
-//  }
+  @GetMapping("/doc/{dni}")
+  public Mono<ResponseEntity<PersonalVip>> searchDni(@PathVariable String dni) {
+
+    return service.findByNumDoc(dni).map(p -> ResponseEntity.ok()
+      .contentType(MediaType.APPLICATION_JSON).body(p))
+      .defaultIfEmpty(ResponseEntity.notFound().build());
+
+  }
+
+  @GetMapping("/valid/{dni}")
+  public Flux<Account> valid(@PathVariable String dni) {
+   
+    return service.findByNumDoc(dni).flatMapMany(personaVip ->{ 
+
+    	return Flux.fromIterable(personaVip.getListAccount());
+    		
+    });	
+    	
+  }
+    
+    
 
 }
